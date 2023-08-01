@@ -1,16 +1,17 @@
-import product from '../models/product.model.js'
+import Product from '../models/product.model.js'
 
 export const createProduct = async (req, res) => {
     const { name, price, type, color, amount, description } = req.body;
         
     try {
-        const newProduct = new product({
+        const newProduct = new Product({
             name, 
             price, 
             type, 
             color, 
             amount, 
-            description})
+            description,
+            user: req.user.id})
 
             const ProductSaved = await newProduct.save();
             res.json({
@@ -22,17 +23,33 @@ export const createProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-export const products = async (req, res) => {
-    const productsFound = await products.findById(req.products.id)
+
+export const getProducts = async (req, res) => {
+    const productsFound = await Product.find().populate('user')
     if (!productsFound) return res.status(400).json({ message: 'User not found' });
     
-    return res.json({
-        id: productsFound._id,
-        name: productsFound.name,
-        price: productsFound.price,
-        amount: productsFound.amount,
-        color: productsFound.color,
-        createdAt: productsFound.createdAt,
-        updatedAt: productsFound.updatedAt
+    return res.json(productsFound)
+}
+
+export const getProduct = async (req , res) => {
+    const product = await Product.findById(req.params.id)
+
+    if (!product) return res.status(404).json({ message: 'product not found'})
+    res.json(product)
+}
+
+export const deleteProduct = async (req , res) => {
+    const product = await Product.findByIdAndDelete(req.params.id)
+
+    if (!product) return res.status(404).json({ message: 'product not found'})
+    res.json(product)
+}
+
+export const updateProduct = async (req , res) => {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+        new: true
     })
+
+    if (!product) return res.status(404).json({ message: 'product not found'})
+    res.json(product)
 }

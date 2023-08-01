@@ -28,6 +28,11 @@ const productsSchema = new mongoose.Schema({
     description:{
         type: String,
         trim: true
+    },
+    user:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true
     }
 },
 {

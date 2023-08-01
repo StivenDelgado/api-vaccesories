@@ -17,7 +17,7 @@ export const login = async (req, res) => {
             res.json({
                 id: userFound._id,
                 username: userFound.username,
-                email: userFound.email
+                email: userFound.email,
             })
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -34,7 +34,9 @@ export const register = async (req, res) => {
             username,
             email,
             password: passwordHash,
-            phonenumber,})
+            phonenumber,
+            role: 'user'
+            })
 
             const userSaved = await newUser.save();
             const token = await createAccessToken({id: userSaved._id})
